@@ -19,23 +19,24 @@ app.get('/', (req, res) => {
 let dbCon = mysql.createConnection({
   host: 'localhost',
   user: 'root',
-  password: '',
+  password: 'P@ssw0rd',
   database: 'eeg_api'
 })
-//dbCon.connect();
 
-// R all EEG
+dbCon.connect();
+
+// Retrieve all EEG
 app.get('/eeg', (req, res) => {
   dbCon.query('SELECT * FROM eeg', (error, results, fields) => {
     if (error) throw error;
 
-    let message = ""
-    if (results === undefined || results.length == 0) {
+    let message =""
+    if (results === undefined || results.length ==0) {
       message = "EEG Table is empty";
     } else {
       message = "Successfully retrieved all EEG";
     }
-    return res.send({ error: false, data: results, message: message });
+      return res.send({error: false, data: results, message: message});
   })
 })
 
@@ -46,11 +47,11 @@ app.post('/eeg', (req, res) => {
 
   // Validation
   if (!frequency || !percentage) {
-    return res.status(400).send({ error: true, message: "Please provide EEG frequency and percentage. " });
+    return res.status(400).send({error: true, message: "Please provide EEG frequency and percentage. "});
   } else {
-    dbCon.query('INSERT INTO eeg (frequency, percentage) VALUES(?, ?)', [frequency, percentage], (error, results, fields) => {
+    dbCon.query('INSERT INTO eeg (frequency, percentage) VALUES(?, ?)', [frequency, percentage],  (error, results, fields) => {
       if (error) throw error;
-      return res.send({ error: false, data: results, message: "EEG Sueeessfuly added" })
+      return res.send({error: false, data: results, message: "EEG Sueeessfuly added"})
 
     })
   }
@@ -61,19 +62,19 @@ app.get('/eeg/:id', (req, res) => {
   let id = req.params.id;
 
   if (!id) {
-    return res.status(400).send({ error: true, message: "Please provide EEG id" });
-  } else {
+    return res.status(400).send({error: true, message: "Please provide EEG id"});
+  }else {
     dbCon.query("SELECT * FROM eeg WHERE id = ?", id, (error, results, fields) => {
       if (error) throw error;
 
       let message = "";
-      if (results === undefined || results.length == 0) {
+      if (results === undefined || results.length ==0){
         message = "EEH not found";
-      } else {
+      }else {
         message = "Successfully Retrieved EEG Data"
       }
 
-      return res.send({ error: false, data: results[0], message: message })
+      return res.send({error: false, data: results[0], message: message})
     })
   }
 })
@@ -86,19 +87,19 @@ app.put('/eeg', (req, res) => {
 
   //Validation
   if (!id || !frequency || !percentage) {
-    return res.status(400).send({ error: true, message: 'Please provide EEG id, frequency and percentage' });
+    return res.status(400).send({error: true, message: 'Please provide EEG id, frequency and percentage'});
   } else {
-    dbCon.query('UPDATE eeg SET frequency =?, percentage =? WHERE id ='[frequency, percentage, id], (error, results, fields) => {
+    dbCon.query('UPDATE eeg SET frequency =?, percentage =? WHERE id =' [frequency, percentage, id], (error, results, fields) => {
       if (error) throw error;
 
       let message = "";
       if (results.changedRows === 0) {
         message = "EEG not found or data are same";
-      } else {
+      }else {
         message = "EEG Successfily Update";
       }
 
-      return res.send({ error: false, data: results, message: message })
+      return res.send({error: false, data: results, message: message})
     })
   }
 })
@@ -108,19 +109,19 @@ app.delete('/eeg', (req, res) => {
   let id = req.body.id;
 
   if (!id) {
-    return res.status(400).send({ error: true, message: "Please Provide EEG id" });
-  } else {
+    return res.status(400).send({error: true, message: "Please Provide EEG id"});
+  }else {
     dbCon.query('DELETE FROM eeg WHERE id = ?', [id], (error, results, fields) => {
       if (error) throw error;
 
-      let message = "";
+      let message ="";
       if (results.affectedRows === 0) {
         message = "EEG not Found";
       } else {
-        message = "EEH Successfuly Delete";
+        message = "EEG Successfuly Delete";
       }
 
-      return res.send({ error: false, data: results, message: message })
+      return res.send({error: false, data: results, message: message})
     })
   }
 })
